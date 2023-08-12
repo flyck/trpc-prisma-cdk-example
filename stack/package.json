@@ -8,7 +8,9 @@
     "build": "tsc",
     "watch": "tsc -w",
     "test": "jest",
-    "cdk": "cdk"
+    "cdk": "cdk",
+    "deploy:infra": "cdk deploy --context stage=dev --all",
+    "deploy:frontend": "cd ..; pnpm build; pnpm export; aws s3 sync ./out/ s3://trpc-prisma-cdk-dev/"
   },
   "devDependencies": {
     "@types/jest": "^29.5.3",

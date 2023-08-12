@@ -1,10 +1,11 @@
-# Prisma + tRPC
+# Prisma + tRPC + AWS CDK
 
 ## Features
 
 - 🧙‍♂️ E2E typesafety with [tRPC](https://trpc.io)
 - ⚡ Full-stack React with Next.js
 - ⚡ Database with Prisma
+- ☁ AWS CDK Stack
 - ⚙️ VSCode extensions
 - 🎨 ESLint + Prettier
 - 💚 CI setup using GitHub Actions:
@@ -14,28 +15,38 @@
 
 ## Setup
 
-```bash
-pnpm create next-app --example https://github.com/trpc/trpc --example-path examples/next-prisma-starter trpc-prisma-starter
-cd trpc-prisma-starter
+- Clone this repo
+- Start the local Dockerfile for local development
+  ```bash
+docker build -t my-postgres-image .
+docker run -p 5432:5432 my-postgres-image
+  ```
+- Install and run
+  ```bash
 pnpm
 pnpm dx
-```
+  ```
+- Deploy to AWS
+  - move into the stack directory
+  - fill out the cdk.json according to your AWS account
+  - Deploy the infrastructure (you might want to limit network access)
+    ```bash
+yarn install
+AWS_PROFILE=personal yarn deploy:infra
+# push your schema to the fresh database
+cd ..
+DATABASE_URL="postgres://postgres:psst@trpc-prisma-cdk.123.eu-central-1.rds.amazonaws.com/main" npx prisma db push
+cd stack
+AWS_PROFILE=personal yarn deploy:frontend
+    ```
+  - Browse to your url and enjoy!
 
 ### Requirements
 
-- Node >= 14
+- Node18
 - Postgres
 
 ## Development
-
-### Start project
-
-```bash
-pnpm create next-app --example https://github.com/trpc/trpc --example-path examples/next-prisma-starter trpc-prisma-starter
-cd trpc-prisma-starter
-pnpm
-pnpm dx
-```
 
 ### Commands
 

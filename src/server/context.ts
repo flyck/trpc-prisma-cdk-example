@@ -28,3 +28,8 @@ export async function createContext(
 
   return await createContextInner({});
 }
+
+// Helper function to create a router with your app's context
+export function createRouter() {
+  return trpc.router<Context>();
+}

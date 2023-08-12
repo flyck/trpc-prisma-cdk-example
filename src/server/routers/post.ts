@@ -3,10 +3,38 @@
  * This is an example router, you can delete this file and then update `../pages/api/trpc/[trpc].tsx`
  */
 import { router, publicProcedure } from '../trpc';
-import { Prisma } from '@prisma/client';
+import { Prisma, PrismaClient } from '@prisma/client';
 import { TRPCError } from '@trpc/server';
 import { z } from 'zod';
-import { prisma } from '~/server/prisma';
+import { fetchSecret, secretId } from './util/secret';
+
+// approach: client not in context
+let secret: string;
+let prisma: PrismaClient;
+
+async function initPrisma() {
+  console.log(secretId);
+  if (!secret) {
+    secret = await fetchSecret();
+  }
+  if (!prisma) {
+    console.log('setting prisma...');
+    prisma = new PrismaClient({
+      log:
+        process.env.NODE_ENV === 'development'
+          ? ['query', 'error', 'warn']
+          : ['error'],
+      datasources: {
+        db: {
+          url: secret,
+        },
+      },
+    });
+    console.log('prisma set.');
+  } else {
+    console.log('prisma already set.');
+  }
+}
 
 /**
  * Default selector for Post.
@@ -38,7 +66,7 @@ export const postRouter = router({
 
       const limit = input.limit ?? 50;
       const { cursor } = input;
-
+      await initPrisma();
       const items = await prisma.post.findMany({
         select: defaultPostSelect,
         // get an extra item at the end which we'll use as next cursor
@@ -75,6 +103,7 @@ export const postRouter = router({
     )
     .query(async ({ input }) => {
       const { id } = input;
+      await initPrisma();
       const post = await prisma.post.findUnique({
         where: { id },
         select: defaultPostSelect,
@@ -96,6 +125,7 @@ export const postRouter = router({
       }),
     )
     .mutation(async ({ input }) => {
+      await initPrisma();
       const post = await prisma.post.create({
         data: input,
         select: defaultPostSelect,

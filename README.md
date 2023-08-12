@@ -1,5 +1,7 @@
 # Prisma + tRPC + AWS CDK
 
+The awesome trpc + prisma starter combo but with the AWS CDK infrastructure ontop.
+
 ## Features
 
 - 🧙‍♂️ E2E typesafety with [tRPC](https://trpc.io)
@@ -17,20 +19,20 @@
 
 - Clone this repo
 - Start the local Dockerfile for local development
-  ```bash
+```bash
 docker build -t my-postgres-image .
 docker run -p 5432:5432 my-postgres-image
-  ```
+```
 - Install and run
-  ```bash
+```bash
 pnpm
 pnpm dx
-  ```
+```
 - Deploy to AWS
   - move into the stack directory
   - fill out the cdk.json according to your AWS account
   - Deploy the infrastructure (you might want to limit network access)
-    ```bash
+```bash
 yarn install
 AWS_PROFILE=personal yarn deploy:infra
 # push your schema to the fresh database
@@ -38,7 +40,7 @@ cd ..
 DATABASE_URL="postgres://postgres:psst@trpc-prisma-cdk.123.eu-central-1.rds.amazonaws.com/main" npx prisma db push
 cd stack
 AWS_PROFILE=personal yarn deploy:frontend
-    ```
+```
   - Browse to your url and enjoy!
 
 ### Requirements
